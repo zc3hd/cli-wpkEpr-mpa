@@ -1,0 +1,8 @@
+#app .box {
+  width: 200px;
+  height: 200px;
+  background: url("imgs/logo.png");
+}
+#app .box span {
+  font-size: 80px;
+}
