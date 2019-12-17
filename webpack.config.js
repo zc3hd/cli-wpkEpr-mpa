@@ -172,12 +172,44 @@ var build = {
       // 
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: [
+          'style-loader',
+          'css-loader',
+          // 
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                require('autoprefixer')({
+                  browsers: ['last 2 versions', '>1%', 'Firefox >= 20', 'Chrome >=40']
+                }),
+              ]
+            }
+          },
+        ]
       },
       //
       {
         test: /\.less$/,
-        loader: 'style-loader!css-loader!less-loader'
+        // loader: 'style-loader!css-loader!less-loader'
+        use: [
+          'style-loader',
+          'css-loader',
+          // 
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                require('autoprefixer')({
+                  browsers: ['last 2 versions', '>1%', 'Firefox >= 20', 'Chrome >=40']
+                }),
+              ]
+            }
+          },
+          'less-loader'
+        ]
       },
       // ------------------------------------
       // fonts

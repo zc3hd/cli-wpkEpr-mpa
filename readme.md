@@ -306,21 +306,33 @@ new HtmlWebpackPlugin({
 
 ### 配置：css&&less
 
-* **webpack侧重于打包，所以为什么要把CSS文件单独输出呢？！**配置loader，打包在index.js内；
+* **webpack侧重于打包，所以为什么要把CSS文件单独输出呢？！**
+* 所以，配置loader，打包在index.js内；
 
 ```js
 module: {
     rules: [
-        
-      // 
-      {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader'
-      },
       //
       {
         test: /\.less$/,
-        loader: 'style-loader!css-loader!less-loader'
+		//
+        use: [
+          'style-loader',
+          'css-loader',
+          // 
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                require('autoprefixer')({
+                  browsers: ['last 2 versions', '>1%', 'Firefox >= 20', 'Chrome >=40']
+                }),
+              ]
+            }
+          },
+          'less-loader'
+        ]
       },
         
     ]
