@@ -122,7 +122,7 @@ var build = {
     filename: 'index.[hash:7].js',
 
     // 给require.ensure异步加载文件 输出名称
-    chunkFilename: '[name].[hash:7].js',
+    chunkFilename: 'async_[name].[hash:7].js',
 
     // 4. HTML内引用 的前缀设置，慎用！
     // publicPath: '/dist/', 
@@ -153,6 +153,11 @@ var build = {
       root: path.resolve(__dirname, one.path.replace(opts.src, opts.dist)),
       verbose: true,
       dry: false,
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"production"'
+      }
     }),
 
   ],

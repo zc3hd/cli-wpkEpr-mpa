@@ -421,52 +421,46 @@ new webpack.optimize.UglifyJsPlugin({
 
 
 
-### 配置：异步加载
+### 配置：异步加载？
 
-* 场景：
-  * 比如某个功能模块，只是在页面中某个地方的弹窗内，需要用到第三方JS插件（有可能带着JS和CSS）；
-  * 该功能用户也可能不会点击，需要设置为异步加载最为合适；
-
-* 在`index.js`内的异步加载：
+* 场景：某个功能模块，只是在该页面地方需要第三方JS插件（有可能带着JS和CSS），其他页面不需要；异步加载；
+* 问题：把异步加载写在点击函数的里面，只会异步加载一次，下次点击不再生效；
+* 所以写在 点击函数的外面，在`index.js`内的异步加载：
 
 ```js
-$('#box')
+// 异步加载
+require.ensure([], function(require) {
+  require('./test.css');
+  var obj = require('./test.js');
+
+
+  $('#box')
     .on("click", function() {
-    // 异步加载css文件
-    require.ensure([], function(require) {
-      require('./async_test.css');
-    }, 'async_test_css');
-	
-    // 异步加载js文件
-    require.ensure([], function(require) {
-      var async_test = require('./async_test.js');
-      console.log(async_test);
-    }, 'async_test_js');
-})
+      console.log("函数内部的执行");
+
+      obj.fn();
+    });
+
+}, 'test_js');
 ```
 
-![1576496136176](assets/1576496136176.png)
+* **思考：但是HTML页面加载后，会异步加载第三方，感觉和同步加载一样！所以可以直接就在页面中引入就可以了！第三方就放入libs**
 
 * 为什么是CSS和JS：因为一般使用的插件都是别人写好的，就是CSS和JS文件，不可能出现less文件；
 
 * **需要注意的问题：!!!**
 
   * 别人写好的CSS和JS文件，一般都已经是被编译和被压缩后的文件；
-  * 所以我们在异步引入之后，**不需要编译和压缩**
-  * **在引入的文件，修改名称，在名称上做特殊的标识，例如：**
+  * 所以我们在异步引入之后，**不需要编译和压缩**，配置输出的文件名为特殊标识：
 
-  ![1576496446751](assets/1576496446751.png)
+  ![1577501947270](assets/1577501947270.png)
 
   * **那么在编译时，就要排除这样的标识，不能被编译。同理：混淆压缩；**
 
   ![1576496926681](assets/1576496926681.png)
 
-* 输出：
 
-  * 输出地址为 `output.path`
-  * 输出文件名加hash值：
 
-  ![1576497121046](assets/1576497121046.png)
 
 ### 配置：无sourceMap
 
@@ -531,8 +525,8 @@ $('#box')
       - `index.less`
       - `index.js` 【把本功能模块需要的AP 配置 到 JS内部】
       - `test_data.js` 【模拟测试数据，用于和后台格式约定】
-      - `async_test.js`【第三方插件JS，注意要加 约定异步加载 标识async 】
-      - `async_test.css`【第三方插件css，注意要加 约定异步加载 标识async 】
+      - `test.js`【第三方插件JS】
+      - `test.css`【第三方插件css】
   - `scripts` 【项目中所有业务需要的公共的JS文件】
     - `common` 【公司自己维护的公共文件】
     - `libs` 【业务需要的其他JS文件，例如JQ，VUE等】
@@ -570,7 +564,7 @@ var opts = {
   // dev模式下，源文件夹名称；
   src: "src_webapp",
 
-  // 依赖文件的目录名称，需要复制
+  // 依赖文件的目录名称，需要手动复制
   copy: "scripts",
 
   // 打包的目录名称
