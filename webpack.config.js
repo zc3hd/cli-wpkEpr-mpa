@@ -47,6 +47,19 @@ var CleanPlugin = require('clean-webpack-plugin');
 
 
 
+// ------------------------------------------用于复制文件，无论是什么模式
+var fs = require('fs-extra');
+
+// 页面引入的文件的复制
+fs.copy(
+    path.resolve(__dirname, opts.src, opts.copy),
+    path.resolve(__dirname, opts.dist, opts.copy), )
+  .then(function() {
+    console.log(`${opts.src}/${opts.copy} 所有文件复制成功`);
+  });
+
+
+
 
 
 
@@ -106,8 +119,6 @@ var dev = {
   },
   devtool: '#source-map',
 };
-
-
 
 
 var build = {
